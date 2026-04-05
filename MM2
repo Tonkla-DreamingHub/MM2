@@ -5,7 +5,7 @@ local TweenService = game:GetService("TweenService")
 local GuiService = game:GetService("GuiService")
 
 -- Lock variable to prevent multiple script executions
-local isRunning = false
+local isRunning = true
 local coinCollectorThread
 local hasReset = false -- Flag to track if the character has been reset
 local hasExecutedOnce = false -- Flag to ensure second script executes only once
