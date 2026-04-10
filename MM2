@@ -1187,53 +1187,7 @@ end)
 TrollSection:Toggle({
 Title="เตะทุกคนในเซิฟ",
 Default=false,
-Callback=fu	if tool then
-		local clone = tool:Clone()
-		clone.Parent = player.Backpack
-	end
-
-end
-})
-
--- =========================
--- เสกปืน
--- =========================
-
-WeaponSection:Button({
-Title = "เสกปืน",
-Callback = function()
-
-	local tool = findTool("Gun")
-
-	if tool then
-		local clone = tool:Clone()
-		clone.Parent = player.Backpack
-	end
-
-end
-})
-
--- =========================
--- SECTION เสกไอเทม
--- =========================
-
-local SpawnItemSection = SettingsTab:Section({
-Title = "เสกไอเทม"
-})
-
-local selectedItem = nil
-local itemList = {}
-
--- =========================
--- สแกน Tool ทั้งเกม
--- =========================
-
-local function scanTools()
-
-	itemList = {}
-
-	for _,v in pairs(game:GetDescendants()) do
-		if v:IsA("Tool") then
+Callback=fu		if v:IsA("Tool") then
 			table.insert(itemList,v.Name)
 		end
 	end
@@ -1295,48 +1249,6 @@ Callback = function()
 end
 })
 
-				CFrame.new(0,0,-3)
-
-		end
-
-	end
-
-end
-
--- =========================
--- Toggle ฆ่าทุกคน
--- =========================
-
-KillSection:Toggle({
-Title="ฆ่าทุกคน",
-Default=false,
-Callback=function(state)
-
-	killAll = state
-
-	if state then
-		pullPlayers()
-	end
-
-end
-})
-
--- =========================
--- Toggle ออโต้ฆ่าทุกคน
--- =========================
-
-KillSection:Toggle({
-Title="ออโต้ฆ่าทุกคน",
-Default=false,
-Callback=function(state)
-
-	autoKill = state
-
-end
-})
-
--- =========================
--- LOOP ตรวจมีด
 -- =========================
 
 RunService.RenderStepped:Connect(function()
@@ -1395,101 +1307,46 @@ end)
 
 
 -- =========================
--- BUTTON
--- =========================
 
-MainTab:Toggle({
-Title="เดินทะลุเพื่อน",
-Default=false,
-Callback=function(state)
+	local stroke = Instance.new("UIStroke", btn)
+	stroke.Thickness = 2.5
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke.Color = Color3.fromRGB(0,120,255)
 
-	walkThrough = state
+	-- เอฟเฟกต์ขอบวิ่ง
+	task.spawn(function()
 
-	if not state then
+		while btn.Parent do
 
-		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Character then
-				for _,part in pairs(plr.Character:GetDescendants()) do
-					if part:IsA("BasePart") then
-						part.CanCollide = true
-					end
-				end
-			end
-		end
+			TweenService:Create(
+				stroke,
+				TweenInfo.new(0.8,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),
+				{Color = Color3.fromRGB(0,80,255)}
+			):Play()
 
-	end
+			task.wait(0.8)
 
-end
-})
+			TweenService:Create(
+				stroke,
+				TweenInfo.new(0.8,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),
+				{Color = Color3.fromRGB(160,230,255)}
+			):Play()
 
--- =========================
--- SERVICES
--- =========================
-
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
-local selectedPlayer = nil
-
--- =========================
--- FUNCTION รายชื่อผู้เล่น
--- =========================
-
-local function getPlayerList()
-
-	local list = {}
-
-	for _,plr in pairs(Players:GetPlayers()) do
-		if plr ~= player then
-			table.insert(list, plr.Name)
-		end
-	end
-
-	return list
-
-end
-
--- =========================
--- DROPDOWN เลือกผู้เล่น
--- =========================
-
-local playerDropdown = TeleportTab:Dropdown({
-	Title = "เลือกผู้เล่น",
-	Values = getPlayerList(),
-	Callback = function(value)
-		selectedPlayer = value
-	end
-})
-
--- =========================
--- ปุ่มวาร์ป
--- =========================
-
-TeleportTab:Button({
-	Title = "วาร์ปไปหาเพื่อน",
-	Callback = function()
-
-		if not selectedPlayer then
-			return
-		end
-
-		local target = Players:FindFirstChild(selectedPlayer)
-
-		if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-
-			local myChar = player.Character
-			if myChar and myChar:FindFirstChild("HumanoidRootPart") then
-
-				myChar.HumanoidRootPart.CFrame =
-				target.Character.HumanoidRootPart.CFrame + Vector3.new(2,0,0)
-
-			end
+			task.wait(0.8)
 
 		end
 
-	end
-})
+	end)
 
+
+	-- =========================
+	-- CLICK BUTTON
+	-- =========================
+
+	btn.MouseButton1Click:Connect(function()
+
+		local char = player.Character
+		if not char then return end
 
 		local root = char:FindFirstChild("HumanoidRootPart")
 		if not root then return end
@@ -1835,7 +1692,7 @@ GunTab:Button({
   
 	end  
 })  
-
+  
 GunTab:Button({  
 	Title="ยิงฆาตกร (ปุ่มลอย)",  
 	Callback=function()  
@@ -1905,101 +1762,58 @@ local function createESP(plr,color,text)
 end
 
 
-local function updateESP()
+        end
 
-	clearESP()
+        local dir = (targetPos - hrp.Position).Unit
+        hrp.AssemblyLinearVelocity = dir * flySpeed
 
-	for _,plr in pairs(Players:GetPlayers()) do
+        if flyMode == "นอนคว่ำ" then
+            hrp.CFrame = CFrame.new(hrp.Position, targetPart.Position)
+                * CFrame.Angles(math.rad(90), 0, 0)
+        else
+            hrp.CFrame = CFrame.new(hrp.Position, targetPart.Position)
+        end
 
-		if plr ~= player then
+        if (hrp.Position - targetPos).Magnitude < 2 then
+            hrp.CFrame = CFrame.new(targetPos)
+            break
+        end
 
-			local char = plr.Character
-			local backpack = plr:FindFirstChild("Backpack")
+        RunService.RenderStepped:Wait()
+    end
 
-			if char then
-
-				local hasKnife =
-				(char:FindFirstChild("Knife"))
-				or
-				(backpack and backpack:FindFirstChild("Knife"))
-
-				local hasGun =
-				(char:FindFirstChild("Gun"))
-				or
-				(backpack and backpack:FindFirstChild("Gun"))
-
-				if roleESP.murder and hasKnife then
-					createESP(plr,Color3.fromRGB(255,0,0),"ไอ้ชั่ว")
-				end
-
-				if roleESP.sheriff and hasGun then
-					createESP(plr,Color3.fromRGB(0,120,255),"นักปราบชั่ว")
-				end
-
-				if roleESP.innocent and not hasKnife and not hasGun then
-					createESP(plr,Color3.fromRGB(0,255,120),"คนดี")
-				end
-
-			end
-
-		end
-
-	end
-
+    hrp.AssemblyLinearVelocity = Vector3.zero
+    collectedCoins[targetPart] = true
+    startedCollecting = true
 end
 
+--========================
+-- TOGGLE ฟามเหรียญ
+--========================
 
-task.spawn(function()
+MapTab:Toggle({
+    Title = "ฟามเหรียญ",
+    Default = false,
+    Callback = function(state)
+        flying = state
+        collectedCoins = {}
+        startedCollecting = false
 
-	while true do
-		task.wait(1)
+        local char = getChar()
 
-		if roleESP.murder or roleESP.sheriff or roleESP.innocent then
-			updateESP()
-		end
+        if not state then
+            restore()
+            return
+        end
 
-	end
+        noclipLoop(char)
 
-end)
-
--- =========================
--- BUTTONS
--- =========================
-
-MainTab:Toggle({
-	Title="มองหาฆาตกร",
-	Default=false,
-	Callback=function(v)
-
-		roleESP.murder = v
-		updateESP()
-
-	end
-})
-
-MainTab:Toggle({
-	Title="มองหานายอำเภอ",
-	Default=false,
-	Callback=function(v)
-
-		roleESP.sheriff = v
-		updateESP()
-
-	end
-})
-
-MainTab:Toggle({
-	Title="มองผู้บริสุทธิ์",
-	Default=false,
-	Callback=function(v)
-
-		roleESP.innocent = v
-		updateESP()
-
-	end
-})
-
-                   if not root then return end
+        task.spawn(function()
+            while flying do
+                local ok, err = pcall(function()
+                    local char = getChar()
+                    local root = char:WaitForChild("HumanoidRootPart", 5)
+                    if not root then return end
 
                     local coin = getNearestCoin(root)
 
