@@ -20,9 +20,9 @@ local gunDropEnabled = false
 -- =========================
 
 local Window = WindUI:CreateWindow({
-Title = "KOMAT UNITY Hub",
+Title = "Demon Cheats",
 Icon = "cpu",
-Author = "by .komat",
+Author = "by DemonScripts",
 Folder = "MySuperHub",
 
 Size = UDim2.fromOffset(580,460),
